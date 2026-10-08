@@ -198,6 +198,35 @@ def executar_juros():
             "Confira o valor e a data no formato DD/MM/AAAA."
         )
 
+def consultar_historico():
+    """Exibe o histórico de movimentações do estoque."""
+    caminho_inicial = DATA_DIR / "estoque.json"
+    caminho_estado = DATA_DIR / "estado_estoque.json"
+
+    estado = carregar_estado(
+        caminho_inicial,
+        caminho_estado,
+    )
+
+    movimentacoes = estado["movimentacoes"]
+
+    print("\nHISTÓRICO DE MOVIMENTAÇÕES")
+    print("-" * 50)
+
+    if not movimentacoes:
+        print("Nenhuma movimentação registrada.")
+        return
+
+    for indice, movimento in enumerate(movimentacoes, start=1):
+        print(f"\nMovimentação #{indice}")
+        print(f'ID: {movimento["id"]}')
+        print(f'Produto: {movimento["descricaoProduto"]}')
+        print(f'Código: {movimento["codigoProduto"]}')
+        print(f'Descrição: {movimento["descricaoMovimentacao"]}')
+        print(f'Quantidade: {movimento["quantidade"]}')
+        print(f'Saldo anterior: {movimento["saldoAnterior"]}')
+        print(f'Saldo atual: {movimento["saldoAtual"]}')
+        print("-" * 50)
 
 def main():
     while True:
@@ -205,26 +234,37 @@ def main():
         print("1 - Calcular comissões")
         print("2 - Movimentar estoque")
         print("3 - Calcular juros por atraso")
+        print("4 - Consultar histórico de estoque")
         print("0 - Sair")
 
         opcao = input("\nEscolha uma opção: ").strip()
 
-        if opcao == "1":
-            executar_comissoes()
 
-        elif opcao == "2":
-            executar_estoque()
+        try:
+            if opcao == "1":
+                executar_comissoes()
 
-        elif opcao == "3":
-            executar_juros()
+            elif opcao == "2":
+                executar_estoque()
 
-        elif opcao == "0":
-            print("\nPrograma encerrado.")
-            break
+            elif opcao == "3":
+                executar_juros()
 
-        else:
-            print("\nOpção inválida. Tente novamente.")
+            elif opcao == "4":
+                consultar_historico()
 
+            elif opcao == "0":
+                print("\nPrograma encerrado.")
+                break
+
+            else:
+                print("\nOpção inválida. Tente novamente.")
+
+        except (OSError, json.JSONDecodeError) as erro:
+            print(f"\nErro ao acessar os dados: {erro}")
+
+        except (KeyError, TypeError) as erro:
+            print(f"\nEstrutura de dados inválida: {erro}")
 
 if __name__ == "__main__":
     main()

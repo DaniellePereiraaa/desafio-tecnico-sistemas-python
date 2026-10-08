@@ -24,3 +24,6 @@ htmlcov/
 # Arquivos temporarios do sistema
 .DS_Store
 Thumbs.db
+
+# Estado local gerado durante a execução
+data/estado_estoque.json

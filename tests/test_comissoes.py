@@ -1,8 +1,11 @@
 
 from decimal import Decimal
-import pytest
 from src.comissoes import calcular_comissao
 from src.comissoes import calcular_comissoes_vendedores
+from pathlib import Path
+
+import pytest
+import json
 
 @pytest.mark.parametrize(
     "valor, esperado",
@@ -44,3 +47,24 @@ def test_calcular_comissoes_vendedores():
 
 def test_calcular_comissoes_lista_vazia():
     assert calcular_comissoes_vendedores([]) == {}
+
+def test_comissoes_json_original():
+    caminho = (
+        Path(__file__).resolve().parent.parent
+        / "data"
+        / "vendas.json"
+    )
+
+    with caminho.open("r", encoding="utf-8") as arquivo:
+        dados = json.load(arquivo)
+
+    resultado = calcular_comissoes_vendedores(dados["vendas"])
+
+    esperado = {
+        "João Silva": Decimal("495.69"),
+        "Maria Souza": Decimal("465.96"),
+        "Carlos Oliveira": Decimal("379.38"),
+        "Ana Lima": Decimal("404.99"),
+    }
+
+    assert resultado == esperado
